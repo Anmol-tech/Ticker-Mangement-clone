@@ -25,7 +25,8 @@ function changeColor(e) {
 	// check same element is clicked
 
 	if (e.target.classList.contains("active-filter")) {
-		ticketContainer.style.background = "#2b2d30";
+		ticketContent.innerHTML = "";
+		initTickets();
 		e.target.classList.remove("active-filter");
 		return;
 	}
@@ -33,10 +34,11 @@ function changeColor(e) {
 	// Remove active filter class if set to any element
 	let activeFilter = document.querySelector(".active-filter");
 	if (activeFilter) {
+		currentFilterColor = filterColorCode[filterColorClass];
 		activeFilter.classList.remove("active-filter");
 	}
 	e.target.classList.add("active-filter");
-	ticketContainer.style.background = filterColorCode[filterColorClass];
+	filterTicket(filterColorClass);
 }
 
 function changeModalFilterColor(e) {
@@ -74,7 +76,7 @@ function openModal(event) {
 	let textDiv = modal.querySelector(".modal-text");
 	textDiv.addEventListener("keypress", function (e) {
 		if (e.key == "Enter" && textDiv.getAttribute("data-type") == "true") {
-			addTicket("ID", e.target.textContent, activeModalFilter);
+			addTicket(e.target.textContent);
 		}
 		if (textDiv.getAttribute("data-type") == "true") {
 			return;
@@ -94,29 +96,77 @@ function openModal(event) {
 function closeModal(event) {
 	if (document.querySelector(".modal")) {
 		document.querySelector(".modal").remove();
+
 		return;
 	}
 }
-function addTicket(id, text, color) {
+function addTicket(text) {
 	if (text === "") return;
-	let ticket = document.createElement("div");
 
+	let id = uid();
+
+	let ticket = document.createElement("div");
 	ticket.classList.add("ticket");
-	ticket.innerHTML = `<div class="ticket-head ${color}"></div>
+	ticket.innerHTML = `<div id = "${id}"class="ticket-head ${activeModalFilter}"></div>
 	<div class="ticket-content">
-		<div class="ticket-code">${id}</div>
+	<div class= "ticket-info">
+	<div class="ticket-code">${id}</div>
+	<div class="ticket-delete"><i ticket-id = "${id}" class="fas fa-trash-alt "></i></div>
+	</div>
 		<div class="ticket-context-text">${text}</div>
 	</div>`;
 
 	ticketContent.append(ticket);
-	closeModal();
+	ticket
+		.querySelector(".ticket-head")
+		.addEventListener("click", changeTicketFilter);
+	ticket
+		.querySelector(".ticket-delete")
+		.addEventListener("click", (e) => deletTicket(e, ticket));
+	// Save ticktes to local Storage
+	let ticketObject = {
+		ticketId: id,
+		ticketText: text,
+		ticketFilter: activeModalFilter,
+	};
 
-	ticket.querySelector(".ticket-head").addEventListener("click", function (e) {
-		let colorArr = ["blue", "yellow", "green", "red"];
-		// console.log(e);
-		let currFilter = e.target.classList[1];
-		let idx = (colorArr.indexOf(currFilter) + 1) % 4;
-		e.target.classList.remove(currFilter);
-		e.target.classList.add(colorArr[idx]);
+	let allTickets = JSON.parse(localStorage.getItem("allTickets"));
+	allTickets.push(ticketObject);
+	localStorage.setItem("allTickets", JSON.stringify(allTickets));
+
+	closeModal();
+	activeModalFilter = "red";
+}
+
+function changeTicketFilter(e) {
+	let colorArr = ["blue", "yellow", "green", "red"];
+	// console.log(e);
+	let currFilter = e.target.classList[1];
+	let idx = (colorArr.indexOf(currFilter) + 1) % 4;
+	e.target.classList.remove(currFilter);
+	e.target.classList.add(colorArr[idx]);
+
+	// Update filter in local storage
+	let id = e.target.id;
+	let allTickets = JSON.parse(localStorage.getItem("allTickets"));
+
+	for (let x = 0; x < allTickets.length; x++) {
+		let ticketObject = allTickets[x];
+		if (ticketObject.ticketId == id) {
+			ticketObject.ticketFilter = colorArr[idx];
+
+			break;
+		}
+	}
+	localStorage.setItem("allTickets", JSON.stringify(allTickets));
+}
+
+function deletTicket(e, ticket) {
+	let ticketId = e.target.getAttribute("ticket-id");
+	ticket.remove();
+	let allTickets = JSON.parse(localStorage.getItem("allTickets"));
+	allTickets = allTickets.filter((ticketObj) => {
+		return ticketObj.ticketId != ticketId;
 	});
+	localStorage.setItem("allTickets", JSON.stringify(allTickets));
 }

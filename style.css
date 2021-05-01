@@ -91,7 +91,7 @@
 	grid-gap: 2%;
 }
 
-.fas {
+.ticket-actions .fas {
 	font-size: 2vw;
 	color: white;
 }
@@ -172,4 +172,15 @@
 	margin-top: 10px;
 	margin-left: 10px;
 	word-break: break-all;
+}
+.ticket-info {
+	display: flex;
+	justify-content: space-between;
+}
+.ticket-info .fas {
+	font-size: 1rem;
+	opacity: 0.5;
+}
+.ticket-info .fas:hover {
+	opacity: 1 !important;
 }
