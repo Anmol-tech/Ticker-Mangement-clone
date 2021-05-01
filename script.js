@@ -110,7 +110,7 @@ function addTicket(text) {
 	ticket.innerHTML = `<div id = "${id}"class="ticket-head ${activeModalFilter}"></div>
 	<div class="ticket-content">
 	<div class= "ticket-info">
-	<div class="ticket-code">${id}</div>
+	<div class="ticket-code">#${id}</div>
 	<div class="ticket-delete"><i ticket-id = "${id}" class="fas fa-trash-alt "></i></div>
 	</div>
 		<div class="ticket-context-text">${text}</div>

@@ -20,7 +20,7 @@ function addTicketToUI(ticketObject) {
 	ticket.innerHTML = `<div id = "${ticketId}"class="ticket-head ${ticketFilter}"></div>
 	<div class="ticket-content">
         <div class= "ticket-info">
-		<div class="ticket-code">${ticketId}</div>
+		<div class="ticket-code">#${ticketId}</div>
 		<div class="ticket-delete"><i ticket-id = "${ticketId}" class="fas fa-trash-alt "></i></div>
         </div>
 		<div class="ticket-context-text">${ticketText}</div>
